@@ -1,0 +1,116 @@
+{% extends 'novels/base.html'%}
+{% load staticfiles %}
+
+{% block title_block%}
+
+{%endblock%}
+
+{%block body_block%}
+        <style >
+        .row{ }
+          .col-6plus{
+                height:400px;
+                margin:0;
+            }
+        .float-sidebar{}
+        </style>
+        <div class="container">
+
+      <div class="row row-offcanvas row-offcanvas-right">
+
+        <div class="col-12 col-md-9" >
+          <p class="float-right hidden-md-up">
+          </p>
+          <div style="padding-left:20px;border-radius:6px;padding-top:15px;padding-bottom:15px;height:270px;width:700px;color:#777;overflow:hidden;position:relative">
+            {%for dn in displaynovels%}
+              <div style="display:none;position:absolute;width:650px;top:30px;" id="img{{forloop.counter}}">
+
+                  <div style="position:relative;height:220px;">
+                      <a href="{%url 'novel:introduction' dn.novel_id%}" style="color:#777">
+                      <div style="float:left;height:200px;">
+                          <img src="/static/images/{{dn.img_url}}"  style="height:180px;width:150px;float:left;">
+                          </div>
+ <center><p style="margin-bottom:18px;line-height:30px;font-size:25px;">{{dn.title}}</p></center>
+                  <p style="line-height:20px;font-size:15px;position:relative;left:20px;top:-10px;padding-right:7px;">{{dn.brief_content}}</p>
+                  <p style="font-size:18px;position:relative;float:right;">作者 {{dn.writer}}</p>
+                      </a>
+              </div>
+              </div>
+              {%endfor%}
+          </div>
+
+        {%if HomeNovels%}
+            <div class="row">
+             {%for novel in HomeNovels%}
+
+
+
+                <div class="col-6 col-lg-4 col-6plus">
+                    <a href="{%url 'novel:category' novel.category%}"><h2>{{novel.category}}</h2></a>
+                    {%if novel.novels%}
+                        {%for n in novel.novels%}
+                    <p style="color:#777;font-size:20px;"><a class="btn btn-secondary" href="{% url 'novel:introduction' n.novel_id %}" role="button" style="color:inherit;font-size:15px">{{n.title}}   <em style="font-weight:lighter;display:inline">{{n.writer}}</em></a></p>
+                        {%endfor%}
+                    {%endif%}
+             </div><!--/span-->
+
+                {%endfor%}
+                 </div>
+        {%endif%}
+
+      </div>
+           <div class="col-6 col-md-3 sidebar-offcanvas float-sidebar" id="sidebar" style="float:right;position:relative;top:25%;right:0%;">
+          <div style="font-size:20px;color: #9d9d9d;padding-left:5px;display:block;width:100%">最热</div>
+          <div class="list-group">
+              {%for hot in hotnovels%}
+                <a href="{{hot.novel_id}}" class="list-group-item ">{{hot.title}}</a>
+              {%endfor%}
+          </div>
+        </div>
+
+    </div>
+        </div>
+<script>
+     $(function(){
+     $("#img1").css({"display":"block"})
+
+     function handlescroll(event){
+     $(window).off('scroll',handlescroll)
+
+      setTimeout(function(){let offtop=$(window).scrollTop()
+       let sidebar=$(".float-sidebar")
+       sidebar.animate({"top":offtop},300)
+       $(window).scroll(handlescroll)
+     },500)
+     }
+     $(window).scroll(handlescroll)
+   })
+</script>
+<script>
+$(function(){
+  let imgs=$("[id^='img']")
+  let imgcounter=0;
+  setTimeout(displayhandler,4000)
+  function displayhandler(){
+      let c=imgs[imgcounter]
+      console.log(imgs)
+      let nextc=(imgcounter+1)%5
+      let n=imgs[nextc]
+
+      showanimation(c,n)
+      imgcounter=nextc
+      setTimeout(displayhandler,4000)
+  }
+  function showanimation(c,n){
+  c=$(c)
+  n=$(n)
+  n.css({"left":"700px","display":"block"})
+
+  n.animate({"left":"30px",},2000)
+  c.animate({"left":"-700px"},2000,function(){
+      c.css("left:0,display:none")})
+  }
+  })
+</script>
+
+{%endblock%}

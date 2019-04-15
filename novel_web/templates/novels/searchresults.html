@@ -1,10 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'novels/base.html' %}
+{% load staticfiles %}
+
+{% block title_block%}
+   Results
+{%endblock%}
+
+{%block body_block%}
+<style>
+   .divrow{
+    position:absolute;
+    top:17%
+
+   }
+   .dp{
+     position:relative;
+     font-size:20px;
+     padding-left:15%;
+     color:#777;
+
+     display:inline;
+   }
+   as{
+     width:400px;
+   }
+</style>
+<container>
+ <div style="width:75%;" class="divrow">
+ {%for n in novels%}
+
+    <a href="{%url 'novel:introduction' n.id%}" style="width:50%;float:left " class="as"><p class="dp">{{forloop.counter}}.{{n.title}}   {{n.writer}}</p></a>
+
+    {%endfor%}
+    </div>
+     <div class="col-6 col-md-3 sidebar-offcanvas" id="sidebar" style="float:right;position:absolute;top:25%;right:0%;">
+          <div style="font-size:20px;color: #9d9d9d;padding-left:5px;display:block;width:100%">最热</div>
+          <div class="list-group">
+              {%for hot in hotnovels%}
+                <a href="{{hot.novel_id}}" class="list-group-item ">{{hot.title}}</a>
+              {%endfor%}
+          </div>
+     </div>
+</container>
+{%endblock%}

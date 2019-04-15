@@ -1,10 +1,68 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'novels/base.html'%}
+{% load staticfiles %}
+    {%block title_block%}
+
+    {%endblock%}
+
+
+    {%block body_block%}
+<style>
+      .dp{
+     position:relative;
+     font-size:15px;
+     padding-left:10%;
+      float:left;
+     width:30%;
+     display:block;
+   }
+</style>
+        <div style="padding-left:100px;">
+            <div style="position:relative;float:left;top:15px;">
+            <img src="{% static imgurl %}" style="height:150px;width:120px;">
+                </div>
+            <div style="position:absolute;font-size:15px;color:#777;left:245px;top:100px;width:300px;">
+                 <p>{{information.title}}</p>
+                <p> 作者：{{information.writer}}</p>
+                <p>类型:{{nbase.category}}</p>
+                <p>最新章节：{{information.newchapter}}</p>
+            </div>
+            <div style="position:absolute;left:450px;width:90px;height:100px;top:120px;">
+                {% if collected%}
+                <div  style="margin-bottom:20px;">已收藏</div>
+                {%else%}
+                <div id="collected"> <button id="collect" style="margin-bottom:20px;" novel_id={{nbase.novel_id}}>收藏</button></div>
+                {%endif%}
+                <button id="dianzan">点赞</button>
+        </div>
+            <div style="position:absolute;left:590px;top:90px;width:650px;font-size:17px;color:#777;">
+                {{nbase.brief_content}}
+            </div>
+        </div>
+
+        <div style="margin-top:5%;position:absolute;top:230px;">
+        {%for clia in clias%}
+        <p class="dp"><a href="{{nbase.novel_id}}/{{clia.href}}" style="color:#777;"> {{clia.name}}</a></p>
+        {%endfor%}
+        </div>
+        <script>
+        $(function(){
+            $("#collect").click(function(){
+                let collectedbutton=("#collect")
+                if(collectedbutton){
+                let id=$("#collect").attr("novel_id")
+                console.log(id)
+                $.post('/novel/collect/',{"novel_id":id}).done(function(response){
+                console.log(response)
+                if(response=="success"){
+
+                    $("#collect").hide()
+                    $("#collected").text("已收藏")
+                }
+                })
+                }
+            })
+
+
+        })
+        </script>
+    {%endblock%}

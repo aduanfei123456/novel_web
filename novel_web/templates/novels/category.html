@@ -1,10 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+ <html>
+ <head>
+<title>Novel</title>
+ </head>
+ <body>
+ <div>
+ {% if category %}
+ <h1>{{ category }}</h1>
+ {% if novels %}
+ <ul>
+ {% for novel in novels %}
+ <li><a href="{% url 'novel:introduction' novel.novel_id %}">{{ novel.title }}</a></li>
+ {% endfor %}
+ </ul>
+ {% else %}
+ <strong>No novels currently in category.</strong>
+ {% endif %}
+{% else %}
+ The specified category does not exist!
+{% endif %}
+</div>
+ </body>
+ </html>

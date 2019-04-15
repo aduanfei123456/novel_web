@@ -1,10 +1,177 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{%extends 'novels/base.html'%}
+{%block title_block%}
+    <div class="blog-header">
+      <div class="container">
+        <h1 class="blog-title" style="padding-left:17%;">{{novel.title}}</h1>
+        <p class="lead blog-description"></p>
+      </div>
+    </div>
+{%endblock%}
+
+{%block body_block%}
+    <style>
+        .setspan{
+        position:relative;
+        top:-5px;
+        }
+    </style>
+    <div class="container">
+
+      <div class="row">
+
+        <div class="col-sm-8 blog-main">
+
+          <div class="blog-post">
+              <div style="margin-bottom:35px;">
+
+
+                  <div style="position:relative">
+                      <span class="blog-post-title;float:left" style="font-size:20px;">{{chapter_name}}</span></div>
+
+                   <div style="position:relative;float:right;">
+                       <div style="float:left;width:200px;">
+                       <div><span style="position:relative;top:0;left:7px;float:left;margin-right:15px;">颜色:</span></div>
+                       <div class="cl"style="float:left;height:20px;width:20px;border-radius:4px;background-color:#777;margin-right:12px;"></div>
+                       <div  class="cl"style="float:left;height:20px;width:20px;border-radius:4px;background-color:#666;margin-right:12px;"></div>
+                       <div  class="cl"style="float:left;height:20px;width:20px;border-radius:4px;background-color:#555;margin-right:12px;"></div>
+                       <div  class="cl"style="float:left;height:20px;width:20px;border-radius:4px;background-color:rgb(108, 118, 177);margin-right:12px;"></div>
+                       </div>
+                <div style="float:left"><span style="position:relative;top:-5px;"> 字体：</span><input style="position:relative;width:50px;display:inline;"id="fontsize" type="range" min="10" max="30" step="2" value="14" > <span id="showsize"style="position:relative;top:-5px;left:7px;">14px</span>
+                </div>
+                </div>
+              </div>
+
+              <p id="ncontent" style="font-size:15px;font-family:Helvetica Neue,Helvetica,Arial,sans-serif; font-weight: 400;line-height: 1.5;color: #9d9d9d;line-height:1.9">{{content}}</p>
+
+          <nav class="blog-pagination" align="40%" style="font-size:45px;">
+              <!-- disabled-->
+            {%if last_chapter%}
+            <a class="btn btn-outline-primary" href="..{{last_chapter}}" style="margin-right:40px;padding-left:25%"><< 上一章</a>
+            {% else %}
+            <a class="btn btn-outline-primary" href="{%url 'novel:homepage'%}" style="margin-right:40px;padding-left:25%"><< 上一章</a>
+            {%endif%}
+            <a class="btn btn-outline-secondary " href="{%url 'novel:introduction' novel.novel_id%}" style="margin-right:40px">目录</a>
+             {%if next_chapter%}
+            <a class="btn btn-outline-secondary " href="..{{next_chapter}}" style="">下一章  >></a>
+            {%else%}
+            <a class="btn btn-outline-secondary " href="{%url 'novel:homepage'%}" style="">下一章  >></a>
+            {%endif%}
+          </nav>
+
+        </div><!-- /.blog-main -->
+        </div>
+        <div class="col-sm-3 offset-sm-1 blog-sidebar float-sidebar" style="float:right;top:-100px;">
+          <div class="sidebar-module sidebar-module-inset" style="width:330px;">
+            <h4>简介</h4>
+            <p style="text-indent:20px;color: #9d9d9d;font-size:18px;">{{novel.brief_content}}</p>
+          </div>
+          <div class="sidebar-module" style="margin-top:65px;">
+            <h4>看这本书的人也在看</h4>
+            <ol class="list-unstyled">
+                {%for n in relative_novels%}
+                 <li><a href="{% url 'novel:introduction' n.novel_id %}" style="color:#777;font-size:18px;">{{n.title}}</a></li>
+                {%endfor%}
+
+            </ol>
+          </div>
+
+        </div><!-- /.blog-sidebar -->
+
+      </div><!-- /.row -->
+
+    </div><!-- /.container -->
+
+    <script>
+     $(function(){
+     function handlescroll(event){
+     $(window).off('scroll',handlescroll)
+
+      setTimeout(function(){let offtop=$(window).scrollTop()
+       let sidebar=$(".float-sidebar")
+       sidebar.animate({"top":offtop},1000)
+       $(window).scroll(handlescroll)
+     },500)
+     }
+     $(window).scroll(handlescroll)
+   })
+    </script>
+   <script>
+        function setcookie(key,value){
+
+            //let cookiemap=getcookies()
+            //cookiemap.set(key,value)
+            //todocument(cookiemap)
+            document.cookie=key+"="+value+";"
+        }
+        function todocument(cookiemap){
+            dcookie=""
+
+            for (key of cookiemap){
+
+                let temps=key[0]+"="+key[1]+";"
+                dcookie+=temps
+            }
+            dcookie+='path=/;'
+            console.log(dcookie)
+            document.cookie=dcookie
+            console.log(document.cookie)
+        }
+        function getcookies(){
+            let curcookies=document.cookie
+            let cookiemap=new Map()
+            let cookies=curcookies.split(";")
+            for (c of cookies){
+                let tempc=c.split("=")
+
+                cookiemap.set(tempc[0].trim(),tempc[1].trim())
+            }
+
+            return cookiemap
+        }
+        function getcookie(key){
+
+            let cookies=getcookies()
+            console.log(cookies,cookies.get(key))
+            return cookies.get(key)
+        }
+       $(function () {
+            $("#fontsize").change(function () {
+                let size = $("#fontsize").val() + "px"
+                setcookie("font-size", size)
+                $("#showsize").text(size)
+                $("#ncontent").css({ "font-size": size })
+            })
+            $("div[class='cl']").click(function () {
+
+                let color = $(this).css("background-color")
+                setcookie("color",color)
+                $("#ncontent").css({ "color": color })
+            })
+            let tempsize = getcookie("font-size")
+
+            if (tempsize) {
+                $("#ncontent").css({ "font-size": tempsize })
+            }
+
+        let tempcolor = getcookie("color")
+        console.log("1",tempcolor)
+        if (tempcolor) {
+            $("#ncontent").css({ "color": tempcolor })
+        }
+        $("body").attr("background","/static/images/background2.jpg")
+        })
+
+   </script>
+    <footer class="blog-footer">
+      <p>Blog template built for <a href="https://getbootstrap.com">Bootstrap</a> by <a href="https://twitter.com/mdo">@mdo</a>.</p>
+      <p>
+        <a href="#">Back to top</a>
+      </p>
+    </footer>
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+
+{%endblock%}
